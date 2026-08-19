@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body, #root {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 html { scroll-behavior: smooth; }
 
 ::-webkit-scrollbar { height: 8px; width: 8px; }

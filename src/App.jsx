@@ -136,7 +136,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-6">
+      <main className="max-w-6xl mx-auto px-4 py-6 w-full min-w-0">
         {error && (
           <div className="mb-4 p-3 rounded-lg bg-red-50 text-red-700 text-sm border border-red-200">
             Couldn't load from Supabase: {error}
@@ -210,7 +210,7 @@ export default function App() {
                       {group.track ? <>{group.date_label}{group.room ? ` · ${group.room}` : ''}</> : `${group.items.length} sessions across all tracks, in time order`}
                     </div>
                   </div>
-                  <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="grid gap-3 sm:grid-cols-2 min-w-0">
                     {group.items.map((event) => (
                       <EventCard
                         key={event.id}
