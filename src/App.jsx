@@ -102,10 +102,10 @@ export default function App() {
           <div>
             <h1 className="text-lg font-bold text-brand-800">IHKS 2026 · Interactive Schedule</h1>
             <p className="text-xs text-slate-500">
-              Yogyakarta Marriott Hotel · 19&ndash;23 August 2026
+              Yogyakarta Marriott Hotel · 20&ndash;23 August 2026
               {' · '}
               <span className={isLive ? 'text-emerald-600' : 'text-amber-600'}>
-                {isLive ? 'Live (Supabase)' : 'Local mode (Supabase not configured)'}
+                {isLive ? 'Live' : 'Local mode (Supabase not configured)'}
               </span>
             </p>
           </div>
