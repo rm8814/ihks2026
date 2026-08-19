@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { InlineEdit, PicDropdown } from './EditControls'
 
 const TYPE_COLORS = {
   keynote: 'bg-purple-100 text-purple-800',
@@ -23,151 +23,111 @@ function TypeBadge({ type }) {
   )
 }
 
-function EditableField({ label, value, onSave, placeholder, options }) {
-  const [editing, setEditing] = useState(false)
-  const [draft, setDraft] = useState(value || '')
-
-  if (!editing) {
-    return (
-      <button
-        type="button"
-        onClick={() => { setDraft(value || ''); setEditing(true) }}
-        className="text-left group/field"
-        title={`Click to edit ${label}`}
-      >
-        <span className="text-[11px] uppercase tracking-wide text-slate-400">{label}</span>
-        <div className="text-sm text-slate-800 group-hover/field:underline decoration-dashed underline-offset-2">
-          {value || <span className="text-slate-400 italic">{placeholder || 'set ' + label}</span>}
-        </div>
-      </button>
-    )
-  }
+function AssignmentRow({ a, editMode, picOptions, speakerOptions, onChange, startTime, endTime }) {
+  const noPic = !a.pic
 
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-[11px] uppercase tracking-wide text-slate-400">{label}</span>
-      <div className="flex gap-1">
-        <input
-          autoFocus
-          list={options ? `${label}-options` : undefined}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') { onSave(draft); setEditing(false) }
-            if (e.key === 'Escape') setEditing(false)
-          }}
-          className="border border-brand-300 rounded px-2 py-1 text-sm flex-1 min-w-0"
-        />
-        {options && (
-          <datalist id={`${label}-options`}>
-            {options.map((o) => <option key={o} value={o} />)}
-          </datalist>
-        )}
-        <button
-          onClick={() => { onSave(draft); setEditing(false) }}
-          className="px-2 py-1 text-xs bg-brand-600 text-white rounded hover:bg-brand-700"
-        >Save</button>
-        <button
-          onClick={() => setEditing(false)}
-          className="px-2 py-1 text-xs bg-slate-200 rounded hover:bg-slate-300"
-        >Cancel</button>
-      </div>
+    <div className={`flex flex-wrap items-center gap-x-2 gap-y-1 py-1.5 px-2 rounded-lg ${noPic ? 'bg-red-50/60' : 'bg-slate-50'}`}>
+      {(startTime || endTime) && (
+        <span className="text-[11px] font-mono text-slate-400 shrink-0">
+          {startTime}{endTime ? `–${endTime}` : ''}
+        </span>
+      )}
+      <span className="text-[10px] uppercase tracking-wide text-slate-400 font-medium w-24 shrink-0">{a.role}</span>
+
+      {editMode ? (
+        <InlineEdit value={a.name} placeholder="name" options={speakerOptions} onSave={(v) => onChange({ ...a, name: v })} />
+      ) : (
+        <span className="text-sm text-slate-800 font-medium">{a.name}</span>
+      )}
+
+      <span className="text-slate-300">·</span>
+
+      {editMode ? (
+        <span className="flex items-center gap-1">
+          <span className="text-[11px] text-slate-400">PIC:</span>
+          <PicDropdown value={a.pic} options={picOptions} onSave={(v) => onChange({ ...a, pic: v || null, pic_inferred: false })} />
+        </span>
+      ) : (
+        <span
+          className={`px-2 py-0.5 rounded-full text-xs font-medium ${noPic ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-emerald-100 text-emerald-800'}`}
+          title={a.pic_inferred ? "Carried over from this person's other sessions — not an exact match for this slot" : undefined}
+        >
+          PIC: {a.pic || 'unassigned'}{a.pic && a.pic_inferred ? ' *' : ''}
+        </span>
+      )}
+
+      {editMode ? (
+        <span className="flex items-center gap-1">
+          <span className="text-[11px] text-slate-400">Assist:</span>
+          <PicDropdown value={a.assist} options={picOptions} onSave={(v) => onChange({ ...a, assist: v || null })} />
+        </span>
+      ) : a.assist ? (
+        <span className="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs font-medium">
+          Assists: {a.assist}
+        </span>
+      ) : null}
     </div>
   )
 }
 
-export default function EventCard({ event, editMode, onUpdate, bookmarked, onToggleBookmark, picOptions, speakerOptions }) {
-  const speakersText = (event.speakers || []).join(', ')
+export default function EventCard({ event, editMode, onUpdate, picOptions, speakerOptions }) {
+  const assignments = event.assignments || []
+  const done = Boolean(event.done)
+
+  const setAssignment = (index, next) => {
+    const nextAssignments = assignments.map((a, i) => (i === index ? next : a))
+    onUpdate(event.id, { assignments: nextAssignments })
+  }
 
   return (
-    <div className="border border-slate-200 rounded-xl bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
+    <div className={`border rounded-xl bg-white p-4 shadow-sm hover:shadow-md transition-shadow ${done ? 'border-emerald-200 bg-emerald-50/40' : 'border-slate-200'}`}>
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2 text-sm font-mono text-slate-500 shrink-0">
-          <span>{event.start_time}</span>
-          <span className="text-slate-300">&rarr;</span>
-          <span>{event.end_time}</span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onUpdate(event.id, { done: !done })}
+            title={done ? 'Mark as not done' : 'Mark as done'}
+            className={`w-5 h-5 rounded-md border flex items-center justify-center text-xs shrink-0 ${
+              done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 text-transparent hover:border-brand-400'
+            }`}
+          >
+            ✓
+          </button>
+          <div className="flex items-center gap-2 text-sm font-mono text-slate-500">
+            <span>{event.start_time}</span>
+            <span className="text-slate-300">&rarr;</span>
+            <span>{event.end_time}</span>
+          </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <TypeBadge type={event.type} />
-          <button
-            onClick={() => onToggleBookmark(event.id)}
-            title={bookmarked ? 'Remove from My Agenda' : 'Add to My Agenda'}
-            className={`text-lg leading-none ${bookmarked ? 'text-amber-500' : 'text-slate-300 hover:text-amber-400'}`}
-          >
-            {bookmarked ? '★' : '☆'}
-          </button>
         </div>
       </div>
 
-      <h3 className="mt-2 font-semibold text-slate-900 leading-snug">{event.title}</h3>
+      <h3 className={`mt-2 font-semibold leading-snug ${done ? 'text-slate-500 line-through decoration-emerald-400' : 'text-slate-900'}`}>
+        {event.title}
+      </h3>
       <div className="mt-1 text-xs text-slate-500">{event.track}{event.room ? ` · ${event.room}` : ''}</div>
 
-      {!editMode && (
-        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-700">
-          {event.speakers?.length > 0 && (
-            <div><span className="text-slate-400">Speaker:</span> {event.speakers.join(', ')}</div>
-          )}
-          {event.chairman && <div><span className="text-slate-400">Chairman:</span> {event.chairman}</div>}
-          {event.co_chairman && <div><span className="text-slate-400">Co-Chairman:</span> {event.co_chairman}</div>}
-          {event.moderator && <div><span className="text-slate-400">Moderator:</span> {event.moderator}</div>}
-          {event.course_director && <div><span className="text-slate-400">Course Director:</span> {event.course_director}</div>}
-        </div>
-      )}
-
-      {!editMode && (event.pic_name || event.assist_pic_name) && (
-        <div className="mt-2 flex flex-wrap gap-2">
-          {event.pic_name && (
-            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-medium">
-              PIC: {event.pic_name}
-            </span>
-          )}
-          {event.assist_pic_name && (
-            <span className="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs font-medium">
-              Assists: {event.assist_pic_name}
-            </span>
-          )}
-        </div>
-      )}
-
-      {!editMode && !event.pic_name && event.type !== 'break' && event.type !== 'social' && (
-        <div className="mt-2">
-          <span className="px-2 py-0.5 rounded-full bg-red-50 text-red-700 text-xs font-medium border border-red-200">
-            No PIC assigned
-          </span>
+      {assignments.length > 0 && (
+        <div className="mt-3 space-y-1.5">
+          {assignments.map((a, i) => (
+            <AssignmentRow
+              key={i}
+              a={a}
+              editMode={editMode}
+              picOptions={picOptions}
+              speakerOptions={speakerOptions}
+              onChange={(next) => setAssignment(i, next)}
+              startTime={event.start_time}
+              endTime={event.end_time}
+            />
+          ))}
         </div>
       )}
 
       {event.notes && (
         <div className="mt-2 text-xs text-slate-500 italic">{event.notes}</div>
-      )}
-
-      {editMode && (
-        <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3 bg-brand-50/60 border border-brand-100 rounded-lg p-3">
-          <EditableField
-            label="Speakers (comma-sep)"
-            value={speakersText}
-            placeholder="add speaker(s)"
-            options={speakerOptions}
-            onSave={(v) => onUpdate(event.id, { speakers: v.split(',').map((s) => s.trim()).filter(Boolean) })}
-          />
-          <EditableField label="Chairman" value={event.chairman} onSave={(v) => onUpdate(event.id, { chairman: v || null })} />
-          <EditableField label="Co-Chairman" value={event.co_chairman} onSave={(v) => onUpdate(event.id, { co_chairman: v || null })} />
-          <EditableField label="Moderator" value={event.moderator} onSave={(v) => onUpdate(event.id, { moderator: v || null })} />
-          <EditableField
-            label="PIC"
-            value={event.pic_name}
-            placeholder="assign PIC"
-            options={picOptions}
-            onSave={(v) => onUpdate(event.id, { pic_name: v || null })}
-          />
-          <EditableField
-            label="Assist PIC"
-            value={event.assist_pic_name}
-            placeholder="assign assist"
-            options={picOptions}
-            onSave={(v) => onUpdate(event.id, { assist_pic_name: v || null })}
-          />
-        </div>
       )}
     </div>
   )

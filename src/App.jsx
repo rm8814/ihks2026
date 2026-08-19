@@ -1,36 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useEvents } from './useEvents'
 import EventCard from './EventCard'
 import SpeakerDirectory from './SpeakerDirectory'
+import PicView from './PicView'
 
-const BOOKMARK_KEY = 'ihks2026_bookmarks_v1'
-
-function useBookmarks() {
-  const [ids, setIds] = useState(() => {
-    try {
-      return new Set(JSON.parse(localStorage.getItem(BOOKMARK_KEY) || '[]'))
-    } catch {
-      return new Set()
-    }
-  })
-  useEffect(() => {
-    localStorage.setItem(BOOKMARK_KEY, JSON.stringify([...ids]))
-  }, [ids])
-  const toggle = (id) => {
-    setIds((prev) => {
-      const next = new Set(prev)
-      next.has(id) ? next.delete(id) : next.add(id)
-      return next
-    })
-  }
-  return { ids, toggle }
-}
-
-const TABS = ['Schedule', 'My Agenda', 'Speakers']
+const TABS = ['Schedule', 'My PIC', 'Speakers']
 
 export default function App() {
   const { events, loading, error, updateEvent, isLive } = useEvents()
-  const bookmarks = useBookmarks()
 
   const [tab, setTab] = useState('Schedule')
   const [editMode, setEditMode] = useState(false)
@@ -38,6 +15,8 @@ export default function App() {
   const [dayFilter, setDayFilter] = useState('all')
   const [trackFilter, setTrackFilter] = useState('all')
   const [picGapOnly, setPicGapOnly] = useState(false)
+  const [hideDone, setHideDone] = useState(false)
+  const [sortMode, setSortMode] = useState('time') // 'time' | 'track'
 
   const days = useMemo(() => {
     const seen = new Map()
@@ -51,55 +30,74 @@ export default function App() {
   }, [events, dayFilter])
 
   const picOptions = useMemo(() => {
-    const set = new Set()
-    events.forEach((e) => { if (e.pic_name) set.add(e.pic_name); if (e.assist_pic_name) set.add(e.assist_pic_name) })
-    ;['Radit', 'Kynthia', 'Mufida', 'Talita', 'Nadhifa', 'Putri', 'Wardah', 'Anin'].forEach((n) => set.add(n))
+    const set = new Set(['Radit', 'Kynthia', 'Mufida', 'Talita', 'Nadhifa', 'Putri', 'Wardah', 'Anin'])
+    events.forEach((e) => (e.assignments || []).forEach((a) => {
+      if (a.pic) set.add(a.pic)
+      if (a.assist) set.add(a.assist)
+    }))
     return [...set].sort()
   }, [events])
 
   const speakerOptions = useMemo(() => {
     const set = new Set()
-    events.forEach((e) => (e.speakers || []).forEach((s) => set.add(s)))
+    events.forEach((e) => (e.assignments || []).forEach((a) => a.name && set.add(a.name)))
     return [...set].sort()
   }, [events])
+
+  const hasGap = (e) =>
+    (e.assignments || []).some((a) => !a.pic) && (e.assignments || []).length > 0
 
   const filtered = useMemo(() => {
     let list = events
     if (dayFilter !== 'all') list = list.filter((e) => e.day === dayFilter)
     if (trackFilter !== 'all') list = list.filter((e) => e.track === trackFilter)
-    if (picGapOnly) list = list.filter((e) => !e.pic_name && e.type !== 'break' && e.type !== 'social')
-    if (tab === 'My Agenda') list = list.filter((e) => bookmarks.ids.has(e.id))
+    if (picGapOnly) list = list.filter(hasGap)
+    if (hideDone) list = list.filter((e) => !e.done)
     if (search.trim()) {
       const q = search.toLowerCase()
       list = list.filter((e) => {
         const haystack = [
           e.title, e.track, e.room, e.notes,
-          ...(e.speakers || []), e.chairman, e.co_chairman, e.moderator,
-          e.course_director, e.pic_name, e.assist_pic_name,
+          ...(e.assignments || []).flatMap((a) => [a.name, a.role, a.pic, a.assist]),
         ].filter(Boolean).join(' ').toLowerCase()
         return haystack.includes(q)
       })
     }
     return list
-  }, [events, dayFilter, trackFilter, picGapOnly, tab, bookmarks.ids, search])
+  }, [events, dayFilter, trackFilter, picGapOnly, hideDone, search])
 
   const grouped = useMemo(() => {
+    if (sortMode === 'time') {
+      // Group by day only, sections are contiguous time windows, items within
+      // sorted chronologically across every track running that day.
+      const map = new Map()
+      for (const e of filtered) {
+        if (!map.has(e.day)) map.set(e.day, { day: e.day, date_label: e.date_label, track: null, room: null, items: [] })
+        map.get(e.day).items.push(e)
+      }
+      for (const group of map.values()) {
+        group.items.sort((a, b) => a.start_time.localeCompare(b.start_time) || a.track.localeCompare(b.track))
+      }
+      return [...map.values()].sort((a, b) => a.day.localeCompare(b.day))
+    }
+
     const map = new Map()
     for (const e of filtered) {
       const key = `${e.day}__${e.track}`
       if (!map.has(key)) map.set(key, { day: e.day, date_label: e.date_label, track: e.track, room: e.room, items: [] })
       map.get(key).items.push(e)
     }
+    for (const group of map.values()) {
+      group.items.sort((a, b) => a.start_time.localeCompare(b.start_time))
+    }
     return [...map.values()].sort((a, b) => (a.day + a.track).localeCompare(b.day + b.track))
-  }, [filtered])
+  }, [filtered, sortMode])
 
-  const gapCount = useMemo(
-    () => events.filter((e) => !e.pic_name && e.type !== 'break' && e.type !== 'social').length,
-    [events]
-  )
+  const gapCount = useMemo(() => events.filter(hasGap).length, [events])
+  const doneCount = useMemo(() => events.filter((e) => e.done).length, [events])
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3 justify-between">
           <div>
@@ -132,7 +130,7 @@ export default function App() {
                 tab === t ? 'bg-brand-100 text-brand-800' : 'text-slate-500 hover:bg-slate-100'
               }`}
             >
-              {t}{t === 'My Agenda' && bookmarks.ids.size > 0 ? ` (${bookmarks.ids.size})` : ''}
+              {t}
             </button>
           ))}
         </div>
@@ -146,7 +144,9 @@ export default function App() {
         )}
 
         {tab === 'Speakers' ? (
-          <SpeakerDirectory events={events} />
+          <SpeakerDirectory events={events} editMode={editMode} onUpdateEvent={updateEvent} picOptions={picOptions} />
+        ) : tab === 'My PIC' ? (
+          <PicView events={events} onUpdateEvent={updateEvent} picOptions={picOptions} />
         ) : (
           <>
             <div className="flex flex-wrap gap-2 mb-4">
@@ -159,7 +159,7 @@ export default function App() {
               <select
                 value={dayFilter}
                 onChange={(e) => { setDayFilter(e.target.value); setTrackFilter('all') }}
-                className="border border-slate-300 rounded-lg px-3 py-2 text-sm"
+                className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full sm:w-auto sm:max-w-[200px] truncate"
               >
                 <option value="all">All days</option>
                 {days.map(([day, label]) => (
@@ -169,7 +169,8 @@ export default function App() {
               <select
                 value={trackFilter}
                 onChange={(e) => setTrackFilter(e.target.value)}
-                className="border border-slate-300 rounded-lg px-3 py-2 text-sm"
+                className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full sm:w-auto sm:max-w-[220px] truncate"
+                title={trackFilter !== 'all' ? trackFilter : undefined}
               >
                 <option value="all">All tracks / rooms</option>
                 {tracks.map((t) => <option key={t} value={t}>{t}</option>)}
@@ -178,21 +179,36 @@ export default function App() {
                 <input type="checkbox" checked={picGapOnly} onChange={(e) => setPicGapOnly(e.target.checked)} />
                 PIC gaps only {gapCount > 0 && <span className="text-red-600 font-medium">({gapCount})</span>}
               </label>
+              <label className="flex items-center gap-2 text-sm border border-slate-300 rounded-lg px-3 py-2 cursor-pointer select-none">
+                <input type="checkbox" checked={hideDone} onChange={(e) => setHideDone(e.target.checked)} />
+                Hide done <span className="text-emerald-600 font-medium">({doneCount}/{events.length} done)</span>
+              </label>
+              <select
+                value={sortMode}
+                onChange={(e) => setSortMode(e.target.value)}
+                className="border border-slate-300 rounded-lg px-3 py-2 text-sm"
+                title="How to order sessions"
+              >
+                <option value="time">Sort by start time</option>
+                <option value="track">Group by track</option>
+              </select>
             </div>
 
             {loading && <div className="text-sm text-slate-500">Loading schedule...</div>}
             {!loading && filtered.length === 0 && (
               <div className="text-sm text-slate-500 italic">
-                {tab === 'My Agenda' ? 'Nothing bookmarked yet — star sessions from the Schedule tab.' : 'No sessions match your filters.'}
+                No sessions match your filters.
               </div>
             )}
 
             <div className="space-y-8">
               {grouped.map((group) => (
-                <section key={`${group.day}__${group.track}`}>
+                <section key={`${group.day}__${group.track || 'all'}`}>
                   <div className="mb-2">
-                    <h2 className="text-base font-semibold text-slate-900">{group.track}</h2>
-                    <div className="text-xs text-slate-500">{group.date_label}{group.room ? ` · ${group.room}` : ''}</div>
+                    <h2 className="text-base font-semibold text-slate-900">{group.track || group.date_label}</h2>
+                    <div className="text-xs text-slate-500">
+                      {group.track ? <>{group.date_label}{group.room ? ` · ${group.room}` : ''}</> : `${group.items.length} sessions across all tracks, in time order`}
+                    </div>
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
                     {group.items.map((event) => (
@@ -201,8 +217,6 @@ export default function App() {
                         event={event}
                         editMode={editMode}
                         onUpdate={updateEvent}
-                        bookmarked={bookmarks.ids.has(event.id)}
-                        onToggleBookmark={bookmarks.toggle}
                         picOptions={picOptions}
                         speakerOptions={speakerOptions}
                       />
@@ -217,7 +231,8 @@ export default function App() {
 
       <footer className="max-w-6xl mx-auto px-4 py-8 text-xs text-slate-400">
         Data sourced from the official IHKS 2026 program book and committee recap sheet.
-        Times/speakers marked "verify" in notes were ambiguous in the source PDF layout — double-check before publishing externally.
+        Each person on a session has their own PIC — a session with multiple people
+        (e.g. a speaker and a course director) can have different PICs for each.
       </footer>
     </div>
   )
