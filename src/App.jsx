@@ -96,7 +96,7 @@ export default function App() {
   const doneCount = useMemo(() => events.filter((e) => e.done).length, [events])
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="min-h-screen">
       <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3 justify-between">
           <div>
