@@ -102,7 +102,7 @@ export default function PicView({ events, onUpdateEvent, picOptions }) {
         else if (a.assist === myPic) assisting.push({ event: e, assignment: a })
       }
     }
-    const byTime = (x, y) => x.event.start_time.localeCompare(y.event.start_time)
+    const byTime = (x, y) => x.event.day.localeCompare(y.event.day) || x.event.start_time.localeCompare(y.event.start_time)
     primary.sort(byTime)
     assisting.sort(byTime)
     return { primary, assisting }

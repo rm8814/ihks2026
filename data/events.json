@@ -939,8 +939,8 @@
         "role": "Speaker",
         "pic": "Nadhifa",
         "assist": null,
-        "phone": null,
-        "email": null,
+        "phone": "+6281380237890",
+        "email": "adinbudi_8910@yahoo.com",
         "pic_inferred": false
       },
       {
@@ -1779,11 +1779,13 @@
     "notes": null,
     "assignments": [
       {
-        "name": "Luthfi Hidayat (Senior Consultant)",
+        "name": "Luthfi Hidayat",
         "role": "Speaker",
         "pic": "Mufida",
         "assist": null,
-        "pic_inferred": true
+        "pic_inferred": true,
+        "phone": "+6281392921300",
+        "email": "hidayat.luthfi@gmail.com"
       },
       {
         "name": "Auliya Akbar",
@@ -2107,8 +2109,8 @@
         "role": "Judge",
         "pic": "Radit",
         "assist": null,
-        "phone": null,
-        "email": null,
+        "phone": "+628123301712",
+        "email": "krisnayuarno@gmail.com",
         "pic_inferred": false
       }
     ],
@@ -5484,19 +5486,22 @@
     "notes": null,
     "assignments": [
       {
-        "name": "Jifaldi Afrian Maharaja Dinda Sedar (Preserve)",
+        "name": "Jifaldi Afrian Maharaja Dinda Sedar",
         "role": "Speaker",
         "pic": "Talita",
         "assist": null,
-        "pic_inferred": true
+        "pic_inferred": true,
+        "phone": "+6281231150500",
+        "email": "jiforthobaya@gmail.com"
       },
       {
-        "name": "Chavarin Amarase (Replace)",
+        "name": "Chavarin Amarase",
         "role": "Speaker",
         "pic": "Radit",
         "assist": null,
         "pic_inferred": true,
-        "phone": "+66817517464"
+        "phone": "+66817517464",
+        "email": "tueskung@hotmail.com"
       },
       {
         "name": "Ivan Mucharry Dalitan",
@@ -5523,14 +5528,16 @@
     "notes": null,
     "assignments": [
       {
-        "name": "Yoshi Pratama Djaja (Arthroscopy)",
+        "name": "Yoshi Pratama Djaja",
         "role": "Speaker",
         "pic": "Radit",
         "assist": null,
-        "pic_inferred": true
+        "pic_inferred": true,
+        "phone": "+6281314101090",
+        "email": "yoshipratamadjaja@yahoo.com"
       },
       {
-        "name": "Marcelino T. Cadag (PAO)",
+        "name": "Marcelino T. Cadag",
         "role": "Speaker",
         "pic": "Mufida",
         "assist": null,
@@ -6729,11 +6736,13 @@
         "pic_inferred": true
       },
       {
-        "name": "Aditya Robby Fuad Triangga",
+        "name": "Aditya Fuad Robby Triangga",
         "role": "Co-Chairman",
         "pic": "Putri",
         "assist": null,
-        "pic_inferred": true
+        "pic_inferred": true,
+        "phone": "+6281210355167",
+        "email": "dr.robby_triangga@yahoo.com"
       }
     ],
     "done": false
@@ -6767,11 +6776,13 @@
         "pic_inferred": true
       },
       {
-        "name": "Aditya Robby Fuad Triangga",
+        "name": "Aditya Fuad Robby Triangga",
         "role": "Co-Chairman",
         "pic": "Putri",
         "assist": null,
-        "pic_inferred": true
+        "pic_inferred": true,
+        "phone": "+6281210355167",
+        "email": "dr.robby_triangga@yahoo.com"
       }
     ],
     "done": false
@@ -6805,11 +6816,13 @@
         "pic_inferred": true
       },
       {
-        "name": "Aditya Robby Fuad Triangga",
+        "name": "Aditya Fuad Robby Triangga",
         "role": "Co-Chairman",
         "pic": "Putri",
         "assist": null,
-        "pic_inferred": true
+        "pic_inferred": true,
+        "phone": "+6281210355167",
+        "email": "dr.robby_triangga@yahoo.com"
       }
     ],
     "done": false
@@ -6840,11 +6853,13 @@
         "assist": null
       },
       {
-        "name": "Aditya Robby Fuad Triangga",
+        "name": "Aditya Fuad Robby Triangga",
         "role": "Co-Chairman",
         "pic": "Putri",
         "assist": null,
-        "pic_inferred": true
+        "pic_inferred": true,
+        "phone": "+6281210355167",
+        "email": "dr.robby_triangga@yahoo.com"
       }
     ],
     "done": false
@@ -6878,11 +6893,13 @@
         "pic_inferred": true
       },
       {
-        "name": "Aditya Robby Fuad Triangga",
+        "name": "Aditya Fuad Robby Triangga",
         "role": "Co-Chairman",
         "pic": "Putri",
         "assist": null,
-        "pic_inferred": true
+        "pic_inferred": true,
+        "phone": "+6281210355167",
+        "email": "dr.robby_triangga@yahoo.com"
       }
     ],
     "done": false
@@ -6916,11 +6933,13 @@
         "pic_inferred": true
       },
       {
-        "name": "Aditya Robby Fuad Triangga",
+        "name": "Aditya Fuad Robby Triangga",
         "role": "Co-Chairman",
         "pic": "Putri",
         "assist": null,
-        "pic_inferred": true
+        "pic_inferred": true,
+        "phone": "+6281210355167",
+        "email": "dr.robby_triangga@yahoo.com"
       }
     ],
     "done": false
@@ -6954,11 +6973,13 @@
         "pic_inferred": true
       },
       {
-        "name": "Aditya Robby Fuad Triangga",
+        "name": "Aditya Fuad Robby Triangga",
         "role": "Co-Chairman",
         "pic": "Putri",
         "assist": null,
-        "pic_inferred": true
+        "pic_inferred": true,
+        "phone": "+6281210355167",
+        "email": "dr.robby_triangga@yahoo.com"
       }
     ],
     "done": false

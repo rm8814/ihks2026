@@ -13,6 +13,9 @@ function collectPeople(events) {
       if (a.email) entry.email = a.email
     }
   }
+  for (const entry of map.values()) {
+    entry.sessions.sort((x, y) => x.event.day.localeCompare(y.event.day) || x.event.start_time.localeCompare(y.event.start_time))
+  }
   return map
 }
 
