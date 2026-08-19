@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { InlineEdit, PicDropdown } from './EditControls'
 
 const TYPE_COLORS = {
@@ -23,7 +24,8 @@ function TypeBadge({ type }) {
   )
 }
 
-function AssignmentRow({ a, editMode, picOptions, speakerOptions, onChange, startTime, endTime }) {
+function AssignmentRow({ a, picOptions, speakerOptions, onChange, startTime, endTime }) {
+  const [editing, setEditing] = useState(false)
   const noPic = !a.pic
 
   return (
@@ -35,7 +37,7 @@ function AssignmentRow({ a, editMode, picOptions, speakerOptions, onChange, star
       )}
       <span className="text-[10px] uppercase tracking-wide text-slate-400 font-medium w-24 shrink-0">{a.role}</span>
 
-      {editMode ? (
+      {editing ? (
         <InlineEdit value={a.name} placeholder="name" options={speakerOptions} onSave={(v) => onChange({ ...a, name: v })} />
       ) : (
         <span className="text-sm text-slate-800 font-medium">{a.name}</span>
@@ -43,7 +45,7 @@ function AssignmentRow({ a, editMode, picOptions, speakerOptions, onChange, star
 
       <span className="text-slate-300">·</span>
 
-      {editMode ? (
+      {editing ? (
         <span className="flex items-center gap-1">
           <span className="text-[11px] text-slate-400">PIC:</span>
           <PicDropdown value={a.pic} options={picOptions} onSave={(v) => onChange({ ...a, pic: v || null, pic_inferred: false })} />
@@ -57,7 +59,7 @@ function AssignmentRow({ a, editMode, picOptions, speakerOptions, onChange, star
         </span>
       )}
 
-      {editMode ? (
+      {editing ? (
         <span className="flex items-center gap-1">
           <span className="text-[11px] text-slate-400">Assist:</span>
           <PicDropdown value={a.assist} options={picOptions} onSave={(v) => onChange({ ...a, assist: v || null })} />
@@ -67,11 +69,21 @@ function AssignmentRow({ a, editMode, picOptions, speakerOptions, onChange, star
           Assists: {a.assist}
         </span>
       ) : null}
+
+      <button
+        onClick={() => setEditing((v) => !v)}
+        title={editing ? 'Done editing' : 'Edit this person'}
+        className={`ml-auto shrink-0 w-6 h-6 rounded-md flex items-center justify-center text-xs ${
+          editing ? 'bg-brand-600 text-white' : 'text-slate-400 hover:bg-slate-200 hover:text-slate-600'
+        }`}
+      >
+        {editing ? '✓' : '✏️'}
+      </button>
     </div>
   )
 }
 
-export default function EventCard({ event, editMode, onUpdate, picOptions, speakerOptions }) {
+export default function EventCard({ event, onUpdate, picOptions, speakerOptions }) {
   const assignments = event.assignments || []
   const done = Boolean(event.done)
 
@@ -115,7 +127,6 @@ export default function EventCard({ event, editMode, onUpdate, picOptions, speak
             <AssignmentRow
               key={i}
               a={a}
-              editMode={editMode}
               picOptions={picOptions}
               speakerOptions={speakerOptions}
               onChange={(next) => setAssignment(i, next)}

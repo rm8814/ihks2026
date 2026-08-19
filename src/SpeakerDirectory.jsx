@@ -33,7 +33,81 @@ function primaryPic(sessions) {
   return { pic: best, consistent }
 }
 
-export default function SpeakerDirectory({ events, editMode, onUpdateEvent, picOptions }) {
+function PersonCard({ name, sessions, phone, email, picOptions, setSessionPic, setPersonContact }) {
+  const [editing, setEditing] = useState(false)
+  const { pic, consistent } = primaryPic(sessions)
+
+  return (
+    <div className="border border-slate-200 rounded-xl bg-white p-4">
+      <div className="flex items-start justify-between gap-2">
+        <div className="font-semibold text-slate-900">{name}</div>
+        <div className="flex items-center gap-1 shrink-0">
+          {!editing && (pic ? (
+            <span
+              className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-medium"
+              title={consistent ? 'Same PIC across all sessions' : 'Most common PIC — varies by session, see below'}
+            >
+              PIC: {pic}{!consistent ? ' *' : ''}
+            </span>
+          ) : (
+            <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-medium border border-red-200">
+              unassigned
+            </span>
+          ))}
+          <button
+            onClick={() => setEditing((v) => !v)}
+            title={editing ? 'Done editing' : 'Edit this person'}
+            className={`w-6 h-6 rounded-md flex items-center justify-center text-xs ${
+              editing ? 'bg-brand-600 text-white' : 'text-slate-400 hover:bg-slate-200 hover:text-slate-600'
+            }`}
+          >
+            {editing ? '✓' : '✏️'}
+          </button>
+        </div>
+      </div>
+
+      {editing ? (
+        <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500">
+          <span className="flex items-center gap-1">
+            📞 <InlineEdit value={phone} placeholder="add phone" small onSave={(v) => setPersonContact(name, 'phone', v)} />
+          </span>
+          <span className="flex items-center gap-1">
+            ✉ <InlineEdit value={email} placeholder="add email" small onSave={(v) => setPersonContact(name, 'email', v)} />
+          </span>
+        </div>
+      ) : (phone || email) && (
+        <div className="mt-1 text-xs text-slate-500 space-x-3">
+          {phone && <a href={`tel:${phone}`} className="hover:text-brand-600">📞 {phone}</a>}
+          {email && <a href={`mailto:${email}`} className="hover:text-brand-600">✉ {email}</a>}
+        </div>
+      )}
+
+      <div className="text-xs text-slate-400 mt-2 mb-2">{sessions.length} session{sessions.length === 1 ? '' : 's'}</div>
+      <ul className="space-y-1.5">
+        {sessions.map(({ event, role, pic: sPic }, i) => (
+          <li key={i} className="text-sm text-slate-700 leading-snug">
+            <span className="text-slate-400">{event.date_label?.split(',')[0]} {event.start_time}</span>
+            {' · '}
+            <span className="text-slate-500 text-xs uppercase tracking-wide">{role}</span>
+            <div className="text-slate-800">{event.title}</div>
+            <div className="text-xs flex items-center gap-1">
+              <span>PIC:</span>
+              {editing ? (
+                <PicDropdown value={sPic} options={picOptions} onSave={(v) => setSessionPic(event, role, name, 'pic', v)} />
+              ) : sPic ? (
+                <span className="text-emerald-700 font-medium">{sPic}</span>
+              ) : (
+                <span className="text-red-600">unassigned</span>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+export default function SpeakerDirectory({ events, onUpdateEvent, picOptions }) {
   const [query, setQuery] = useState('')
   const peopleMap = useMemo(() => collectPeople(events), [events])
 
@@ -78,63 +152,17 @@ export default function SpeakerDirectory({ events, editMode, onUpdateEvent, picO
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {names.map((name) => {
           const { sessions, phone, email } = peopleMap.get(name)
-          const { pic, consistent } = primaryPic(sessions)
           return (
-            <div key={name} className="border border-slate-200 rounded-xl bg-white p-4">
-              <div className="flex items-start justify-between gap-2">
-                <div className="font-semibold text-slate-900">{name}</div>
-                {!editMode && (pic ? (
-                  <span
-                    className="shrink-0 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-medium"
-                    title={consistent ? 'Same PIC across all sessions' : 'Most common PIC — varies by session, see below'}
-                  >
-                    PIC: {pic}{!consistent ? ' *' : ''}
-                  </span>
-                ) : (
-                  <span className="shrink-0 px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-medium border border-red-200">
-                    unassigned
-                  </span>
-                ))}
-              </div>
-
-              {editMode ? (
-                <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500">
-                  <span className="flex items-center gap-1">
-                    📞 <InlineEdit value={phone} placeholder="add phone" small onSave={(v) => setPersonContact(name, 'phone', v)} />
-                  </span>
-                  <span className="flex items-center gap-1">
-                    ✉ <InlineEdit value={email} placeholder="add email" small onSave={(v) => setPersonContact(name, 'email', v)} />
-                  </span>
-                </div>
-              ) : (phone || email) && (
-                <div className="mt-1 text-xs text-slate-500 space-x-3">
-                  {phone && <a href={`tel:${phone}`} className="hover:text-brand-600">📞 {phone}</a>}
-                  {email && <a href={`mailto:${email}`} className="hover:text-brand-600">✉ {email}</a>}
-                </div>
-              )}
-
-              <div className="text-xs text-slate-400 mt-2 mb-2">{sessions.length} session{sessions.length === 1 ? '' : 's'}</div>
-              <ul className="space-y-1.5">
-                {sessions.map(({ event, role, pic: sPic }, i) => (
-                  <li key={i} className="text-sm text-slate-700 leading-snug">
-                    <span className="text-slate-400">{event.date_label?.split(',')[0]} {event.start_time}</span>
-                    {' · '}
-                    <span className="text-slate-500 text-xs uppercase tracking-wide">{role}</span>
-                    <div className="text-slate-800">{event.title}</div>
-                    <div className="text-xs flex items-center gap-1">
-                      <span>PIC:</span>
-                      {editMode ? (
-                        <PicDropdown value={sPic} options={picOptions} onSave={(v) => setSessionPic(event, role, name, 'pic', v)} />
-                      ) : sPic ? (
-                        <span className="text-emerald-700 font-medium">{sPic}</span>
-                      ) : (
-                        <span className="text-red-600">unassigned</span>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <PersonCard
+              key={name}
+              name={name}
+              sessions={sessions}
+              phone={phone}
+              email={email}
+              picOptions={picOptions}
+              setSessionPic={setSessionPic}
+              setPersonContact={setPersonContact}
+            />
           )
         })}
       </div>

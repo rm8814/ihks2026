@@ -10,7 +10,6 @@ export default function App() {
   const { events, loading, error, updateEvent, isLive } = useEvents()
 
   const [tab, setTab] = useState('Schedule')
-  const [editMode, setEditMode] = useState(false)
   const [search, setSearch] = useState('')
   const [dayFilter, setDayFilter] = useState('all')
   const [trackFilter, setTrackFilter] = useState('all')
@@ -110,16 +109,6 @@ export default function App() {
               </span>
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setEditMode((v) => !v)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${
-                editMode ? 'bg-brand-600 text-white border-brand-600' : 'bg-white text-brand-700 border-brand-300'
-              }`}
-            >
-              {editMode ? 'Editing: On' : 'Edit Speakers / PIC'}
-            </button>
-          </div>
         </div>
         <div className="max-w-6xl mx-auto px-4 flex gap-1 pb-2">
           {TABS.map((t) => (
@@ -144,7 +133,7 @@ export default function App() {
         )}
 
         {tab === 'Speakers' ? (
-          <SpeakerDirectory events={events} editMode={editMode} onUpdateEvent={updateEvent} picOptions={picOptions} />
+          <SpeakerDirectory events={events} onUpdateEvent={updateEvent} picOptions={picOptions} />
         ) : tab === 'My PIC' ? (
           <PicView events={events} onUpdateEvent={updateEvent} picOptions={picOptions} />
         ) : (
@@ -215,7 +204,6 @@ export default function App() {
                       <EventCard
                         key={event.id}
                         event={event}
-                        editMode={editMode}
                         onUpdate={updateEvent}
                         picOptions={picOptions}
                         speakerOptions={speakerOptions}
