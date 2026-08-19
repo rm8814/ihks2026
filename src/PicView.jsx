@@ -19,32 +19,6 @@ function dayBadge(day) {
   return DAY_STYLE[day] || { label: day ? day.slice(5) : '?', style: { background: '#94a3b8', color: '#fff' } }
 }
 
-function ContactRow({ phone, email }) {
-  if (!phone && !email) return null
-  return (
-    <div className="flex flex-wrap gap-2 mt-2" onClick={(e) => e.stopPropagation()}>
-      {phone ? (
-        <>
-          <a href={`tel:${phone.replace(/\s+/g, '')}`} className="text-xs font-medium px-2.5 py-1 rounded-lg bg-slate-100 text-emerald-700 hover:bg-slate-200">
-            📞 {phone}
-          </a>
-          <a href={`https://wa.me/${phone.replace(/[^\d]/g, '')}`} target="_blank" rel="noreferrer"
-             className="text-xs font-medium px-2.5 py-1 rounded-lg bg-slate-100 text-emerald-700 hover:bg-slate-200">
-            💬 WhatsApp
-          </a>
-        </>
-      ) : (
-        <span className="text-xs px-2.5 py-1 rounded-lg bg-slate-50 text-slate-400">📞 no number on file</span>
-      )}
-      {email && (
-        <a href={`mailto:${email}`} className="text-xs font-medium px-2.5 py-1 rounded-lg bg-slate-100 text-brand-700 hover:bg-slate-200">
-          ✉ {email}
-        </a>
-      )}
-    </div>
-  )
-}
-
 function SessionRow({ event, role, note, onToggleDone }) {
   const done = Boolean(event.done)
   return (
@@ -228,7 +202,6 @@ export default function PicView({ events, onUpdateEvent, picOptions }) {
                 </button>
                 {isOpen && (
                   <div className="px-3 pb-3">
-                    <ContactRow phone={doc.phone} email={doc.email} />
                     <div className="space-y-2 mt-2">
                       {doc.sessions.map(({ event, role }, i) => (
                         <SessionRow key={i} event={event} role={role} onToggleDone={() => onUpdateEvent(event.id, { done: !event.done })} />
@@ -251,7 +224,6 @@ export default function PicView({ events, onUpdateEvent, picOptions }) {
                 note={subView === 'Assisting' ? `Primary PIC: ${assignment.pic}` : undefined}
                 onToggleDone={() => onUpdateEvent(event.id, { done: !event.done })}
               />
-              <ContactRow phone={assignment.phone} email={assignment.email} />
             </div>
           ))}
         </div>
