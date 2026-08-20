@@ -2213,6 +2213,30 @@
     "room": "Kraton Grand Ballroom",
     "start_time": "09:45",
     "end_time": "10:00",
+    "title": "Keynote Lecture 4: Optimising Outcome: Surgical Skills and Critical Mind",
+    "type": "keynote",
+    "notes": null,
+    "assignments": [
+      {
+        "name": "Rob G.H.H. Nelissen",
+        "role": "Speaker",
+        "pic": "Mufida",
+        "assist": null,
+        "email": "R.G.H.H.Nelissen@lumc.nl",
+        "pic_inferred": true
+      }
+    ],
+    "done": false
+  },
+  {
+    "id": "d1a8a021-be06-4d35-98c3-15c82f36ccd9",
+    "sort_order": 79,
+    "day": "2026-08-21",
+    "date_label": "Friday, 21 August 2026",
+    "track": "Scientific Lecture Day 1 - Keynote Lectures",
+    "room": "Kraton Grand Ballroom",
+    "start_time": "10:00",
+    "end_time": "10:15",
     "title": "Keynote Lecture 5: AORecon - Current Concept in Periprosthetic Fractures",
     "type": "keynote",
     "notes": null,
@@ -2230,29 +2254,6 @@
     "done": false
   },
   {
-    "id": "d1a8a021-be06-4d35-98c3-15c82f36ccd9",
-    "sort_order": 79,
-    "day": "2026-08-21",
-    "date_label": "Friday, 21 August 2026",
-    "track": "Scientific Lecture Day 1 - Keynote Lectures",
-    "room": "Kraton Grand Ballroom",
-    "start_time": "10:00",
-    "end_time": "10:15",
-    "title": "Keynote Lecture 7: Staying at The Top of Spanish Football After ACL Injury. My Experience.",
-    "type": "keynote",
-    "notes": null,
-    "assignments": [
-      {
-        "name": "Manuel Leyes Vence",
-        "role": "Speaker",
-        "pic": "Nadhifa",
-        "assist": null,
-        "pic_inferred": true
-      }
-    ],
-    "done": false
-  },
-  {
     "id": "fb367015-4495-4d8a-98b6-cabaab2a9e1b",
     "sort_order": 80,
     "day": "2026-08-21",
@@ -2261,16 +2262,15 @@
     "room": "Kraton Grand Ballroom",
     "start_time": "10:15",
     "end_time": "10:30",
-    "title": "Keynote Lecture 4: Optimising Outcome: Surgical Skills and Critical Mind",
+    "title": "Keynote Lecture 6: ACL Injuries in Football Athletes - Experiences from the US Women's National Team",
     "type": "keynote",
     "notes": null,
     "assignments": [
       {
-        "name": "Rob G.H.H. Nelissen",
+        "name": "Vehniah Kristin Tjong",
         "role": "Speaker",
-        "pic": "Mufida",
+        "pic": "Kynthia",
         "assist": null,
-        "email": "R.G.H.H.Nelissen@lumc.nl",
         "pic_inferred": true
       }
     ],
@@ -2285,14 +2285,14 @@
     "room": "Kraton Grand Ballroom",
     "start_time": "10:30",
     "end_time": "10:45",
-    "title": "Keynote Lecture 6: ACL Injuries in Football Athletes - Experiences from the US Women's National Team",
+    "title": "Keynote Lecture 7: Staying at The Top of Spanish Football After ACL Injury. My Experience.",
     "type": "keynote",
     "notes": null,
     "assignments": [
       {
-        "name": "Vehniah Kristin Tjong",
+        "name": "Manuel Leyes Vence",
         "role": "Speaker",
-        "pic": "Kynthia",
+        "pic": "Nadhifa",
         "assist": null,
         "pic_inferred": true
       }
