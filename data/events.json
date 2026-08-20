@@ -1511,13 +1511,13 @@
     "notes": "MC & PIC team: Satria Prawira Putra / Mohammad Triadi Wijaya",
     "assignments": [
       {
-        "name": "Mohammad Triadi Wijaya",
+        "name": "Satria Prawira Putra",
         "role": "Speaker",
-        "pic": "Anin",
+        "pic": null,
         "assist": null,
         "phone": "+6282125994821",
         "email": "m.triadi@gmail.com",
-        "pic_inferred": true
+        "pic_inferred": false
       },
       {
         "name": "Auliya Akbar",
@@ -1545,9 +1545,9 @@
     "notes": null,
     "assignments": [
       {
-        "name": "Auliya Akbar",
+        "name": "Fanny Indra Warman",
         "role": "Speaker",
-        "pic": "Talita",
+        "pic": "Kynthia",
         "assist": null,
         "pic_inferred": true,
         "phone": "+6282170078238",
@@ -1629,10 +1629,11 @@
     "notes": null,
     "assignments": [
       {
-        "name": "Miftahul Huda (RS Mitra Keluarga)",
+        "name": "Mohammad Triadi Wijaya",
         "role": "Speaker",
-        "pic": null,
-        "assist": null
+        "pic": "Anin",
+        "assist": null,
+        "pic_inferred": true
       },
       {
         "name": "Auliya Akbar",
@@ -1660,10 +1661,11 @@
     "notes": null,
     "assignments": [
       {
-        "name": "Hana Grahana (RSCM Kencana)",
+        "name": "Auliya Akbar",
         "role": "Speaker",
-        "pic": null,
-        "assist": null
+        "pic": "Talita",
+        "assist": null,
+        "pic_inferred": true
       },
       {
         "name": "Auliya Akbar",
@@ -1716,10 +1718,11 @@
     "notes": null,
     "assignments": [
       {
-        "name": "Bernadetta Oktriana Selvia (RS Santo Borromeus)",
+        "name": "Miftahul Huda (RS Mitra Keluarga)",
         "role": "Speaker",
         "pic": null,
-        "assist": null
+        "assist": null,
+        "pic_inferred": false
       },
       {
         "name": "Auliya Akbar",
@@ -1747,11 +1750,11 @@
     "notes": null,
     "assignments": [
       {
-        "name": "Esther Yulihandari (RS Mitra Keluarga)",
+        "name": "Hana Grahana (RSCM Kencana)",
         "role": "Speaker",
-        "pic": "Talita",
+        "pic": null,
         "assist": null,
-        "pic_inferred": true
+        "pic_inferred": false
       },
       {
         "name": "Auliya Akbar",
@@ -1779,11 +1782,11 @@
     "notes": null,
     "assignments": [
       {
-        "name": "Luthfi Hidayat",
+        "name": "Bernadetta Oktriana Selvia (RS Santo Borromeus)",
         "role": "Speaker",
-        "pic": "Mufida",
+        "pic": null,
         "assist": null,
-        "pic_inferred": true,
+        "pic_inferred": false,
         "phone": "+6281392921300",
         "email": "hidayat.luthfi@gmail.com"
       },
@@ -1813,9 +1816,9 @@
     "notes": null,
     "assignments": [
       {
-        "name": "Fanny Indra Warman",
+        "name": "Esther Yulihandari (RS Mitra Keluarga)",
         "role": "Speaker",
-        "pic": "Kynthia",
+        "pic": "Talita",
         "assist": null,
         "pic_inferred": true,
         "phone": "+6287838238299",
@@ -1896,6 +1899,15 @@
     "type": "lecture",
     "notes": null,
     "assignments": [
+      {
+        "name": "Luthfi Hidayat (Senior Consultant)",
+        "role": "Speaker",
+        "pic": "Mufida",
+        "assist": null,
+        "phone": null,
+        "email": null,
+        "pic_inferred": true
+      },
       {
         "name": "Auliya Akbar",
         "role": "Course Director",
