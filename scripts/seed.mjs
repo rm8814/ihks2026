@@ -31,6 +31,26 @@ const events = JSON.parse(
 
 console.log(`Seeding ${events.length} events into Supabase...`)
 
+// Preserve the "done" checklist state that people have set live in the app —
+// data/events.json on disk never has that, so a plain re-seed would silently
+// wipe every checked box. Pull current done flags first and carry them over.
+const { data: existingRows, error: fetchError } = await supabase.from('events').select('id, done')
+if (fetchError) {
+  console.error('Failed to read existing events (for preserving checklist state):', fetchError.message)
+  process.exit(1)
+}
+const doneById = new Map((existingRows || []).map((r) => [r.id, r.done]))
+let carried = 0
+for (const e of events) {
+  if (doneById.has(e.id) && doneById.get(e.id)) {
+    e.done = true
+    carried++
+  }
+}
+if (carried > 0) {
+  console.log(`  carrying over ${carried} checked "done" session(s) from the live database`)
+}
+
 // Clear existing rows first so re-running this script is idempotent.
 const { error: delError } = await supabase.from('events').delete().neq('id', '00000000-0000-0000-0000-000000000000')
 if (delError) {
